@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthPath – AI Pathology & Diagnostic Test Web App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            light: '#0ea5e9', // sky-500
+                            DEFAULT: '#0284c7', // sky-600
+                            dark: '#0369a1' // sky-700
+                        },
+                        secondary: {
+                            light: '#14b8a6', // teal-500
+                            DEFAULT: '#0d9488', // teal-600
+                            dark: '#0f766e' // teal-700
+                        },
+                        accent: '#ec4899', // pink-500
+                    },
+                    keyframes: {
+                        'fade-in-up': {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    },
+                    animation: {
+                        'fade-in-up': 'fade-in-up 0.3s ease-out forwards',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+      /* Scoped styles for FitCalc component */
+      .fitcalc-container {
+        --fc-primary: #4361ee;
+        --fc-secondary: #3a0ca3;
+        --fc-accent: #4cc9f0;
+        --fc-light: #f8f9fa;
+        --fc-dark: #212529;
+        --fc-success: #4bb543;
+        --fc-warning: #ffcc00;
+        --fc-danger: #dc3545;
+        --fc-border-radius: 12px;
+        --fc-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        --fc-transition: all 0.3s ease;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--fc-light);
+      }
+      .fitcalc-container h1, .fitcalc-container h2, .fitcalc-container h3, .fitcalc-container h4 {
+        color: white;
+      }
+      .dark .fitcalc-container {
+        color: var(--fc-light);
+      }
+      .fitcalc-container .calculator-card {
+        background: rgba(30, 41, 59, 0.95);
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+        padding: 24px;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+      .fitcalc-container .calculator-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      }
+      .fitcalc-container .card-title {
+        color: #38bdf8;
+        font-weight: 600;
+      }
+      .fitcalc-container input, .fitcalc-container select {
+        background: #1e293b;
+        color: #f1f5f9;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 10px 15px;
+        width: 100%;
+      }
+      .fitcalc-container input:focus, .fitcalc-container select:focus {
+        border-color: #38bdf8;
+        outline: none;
+        box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+      }
+      .fitcalc-container button.gradient-shift {
+        background: linear-gradient(90deg, #06b6d4, #3b82f6);
+        color: #fff;
+        border-radius: 10px;
+        border: none;
+        padding: 12px 18px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+      .fitcalc-container button.gradient-shift:hover {
+        background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        box-shadow: 0 4px 15px rgba(56, 189, 248, 0.5);
+      }
+      .fitcalc-container .info-section {
+        background: rgba(15, 23, 42, 0.7);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .fitcalc-container .formula-box {
+        background: rgba(30, 41, 59, 0.8);
+        border-left: 4px solid #38bdf8;
+        padding: 12px;
+        border-radius: 8px;
+      }
+      .fitcalc-container table {
+        border-collapse: collapse;
+        width: 100%;
+        background: rgba(30, 41, 59, 0.85);
+      }
+      .fitcalc-container th {
+        background: #3b82f6;
+        color: white;
+        padding: 8px 12px;
+      }
+      .fitcalc-container td {
+        padding: 8px 12px;
+        border-top: 1px solid #334155;
+      }
+      .fitcalc-container .result { display: none; }
+      .fitcalc-container .result.active { display: block; }
+
+      .fitcalc-container .tab {
+          padding: 12px 20px;
+          background: rgba(255, 255, 255, 0.1);
+          border: none;
+          border-radius: var(--fc-border-radius);
+          cursor: pointer;
+          transition: var(--fc-transition);
+          font-weight: 600;
+          color: white;
+      }
+      .fitcalc-container .tab.active {
+          background: var(--fc-primary);
+          color: white;
+      }
+      .fitcalc-container .result-category {
+        padding: 8px 15px;
+        border-radius: 30px;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
+      .fitcalc-container .category-underweight { background: rgba(255, 234, 167, 0.3); color: #ffeaa7; }
+      .fitcalc-container .category-normal { background: rgba(85, 239, 196, 0.3); color: #55efc4; }
+      .fitcalc-container .category-overweight { background: rgba(250, 177, 160, 0.3); color: #fab1a0; }
+      .fitcalc-container .category-obese { background: rgba(255, 118, 117, 0.3); color: #ff7675; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "recharts": "https://aistudiocdn.com/recharts@^3.3.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.27.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-900">
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
